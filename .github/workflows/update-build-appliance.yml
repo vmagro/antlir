@@ -31,9 +31,6 @@ jobs:
       - name: Fetch buck
         run: buck --version
 
-      - name: Validate appliance
-        run: buck build -c python.package_style=standalone -c antlir.build_appliance_default=//images/appliance:bootstrap_build_appliance //images/base/...
-
       - name: Build appliance sendstream
         run: buck build -c python.package_style=standalone --out stable_build_appliance.sendstream.zst //images/appliance:bootstrap_build_appliance.sendstream.zst
 
@@ -50,7 +47,7 @@ jobs:
           sha="$(sha256sum stable_build_appliance.sendstream.zst | awk '{ print $1 }')"
           aws s3 cp stable_build_appliance.sendstream.zst "s3://antlir/images/appliance/stable_build_appliance.sendstream.zst.$sha"
           rm stable_build_appliance.sendstream.zst
-          echo "stable_build_appliance_sha = $sha" > images/appliance/stable_appliance.bzl
+          echo "stable_build_appliance_sha = \"$sha\"" > images/appliance/stable_appliance.bzl
 
       - name: Commit new hash
         run: |
@@ -72,12 +69,21 @@ jobs:
           This version of the build appliance has already been validated by
           building the base image(s) shipped with Antlir.
 
-          antlir_oss oncall: please land import and land this PR if the
-          GitHub Actions signal looks good.
+          antlir_oss oncall: please import and land this PR internally, it
+          will then automatically be closed.
 
           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           EOF
 
+      # Validate the appliance after committing the new stable hash. This
+      # avoids inplace python shenanigans as well as actually exercising the
+      # new stable build appliance in the same manner as normal use
+      # (downloading it from S3)
+      - name: Validate new appliance
+        run: buck build //images/base/...
+      
+      - name: Push commit
+        run:
           # force pushing will update any PR that already exists
           git push -f -u origin upload-stable-build-appliance
 
