@@ -22,6 +22,7 @@ from antlir.nspawn_in_subvol.args import (
     NspawnPluginArgs,
     PopenArgs,
     new_nspawn_opts,
+    _new_nspawn_debug_only_not_for_prod_opts,
 )
 from antlir.nspawn_in_subvol.nspawn import run_nspawn
 from antlir.subvol_utils import Subvol
@@ -129,6 +130,7 @@ def _convert_actions_to_commands(
             cmd_to_names_or_pkgs.setdefault(cmd, set()).add(new_nor)
     return cmd_to_names_or_pkgs
 
+
 def _pkgs_and_bind_ros(
     names_or_pkgs: List[Union[str, _LocalPackage]]
 ) -> Tuple[List[str], List[str]]:
@@ -187,9 +189,7 @@ class PacmanActionItem(ImageItem):
             #
             # Sort by command for determinism and clearer behaivor.
             for cmd, nors in sorted(
-                _convert_actions_to_commands(
-                    subvol, action_to_names_or_pkgs
-                ).items(),
+                _convert_actions_to_commands(subvol, action_to_names_or_pkgs).items(),
                 key=lambda cn: PACMAN_COMMAND_ORDER[cn[0]],
             ):
                 pkgs, bind_ros = _pkgs_and_bind_ros(nors)
@@ -254,6 +254,7 @@ def _pacman_using_build_appliance(
         bindmount_ro=bind_ros,
         bindmount_rw=[(install_root, work_dir)],
         user=pwd.getpwnam("root"),
+        debug_only_opts=_new_nspawn_debug_only_not_for_prod_opts(private_network=False),
     )
     run_nspawn(
         opts,

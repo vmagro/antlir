@@ -209,6 +209,8 @@ def _extra_nspawn_args_and_env(
 
     if opts.debug_only_opts.private_network:
         extra_nspawn_args.append("--private-network")
+    else:
+        extra_nspawn_args.append("--resolv-conf=off")
 
     if opts.bindmount_rw:
         for src, dest in opts.bindmount_rw:
