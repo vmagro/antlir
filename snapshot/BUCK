@@ -13,6 +13,10 @@ rpm_repo_snapshot(
     storage = fedora_storage_config(33),
 )
 
+export_file(
+    name = "archlinux-archive-2021-01-08",
+)
+
 # Command to snapshot the specified Fedora repos.
 # Currently just snapshot the Fedora33 Everything 'os' repository, but this will be
 # expanded to support more Fedora versions and repos.
