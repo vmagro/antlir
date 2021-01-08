@@ -1,3 +1,6 @@
+[options]
+Architecture = auto
+
 [core]
 SigLevel = PackageRequired
 Server=https://archive.archlinux.org/repos/2021/01/08/$repo/os/$arch
