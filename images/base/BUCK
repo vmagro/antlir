@@ -14,3 +14,10 @@ image.layer(
         rpm_repo_snapshot = "//snapshot:fedora33",
     ),
 )
+
+image.layer(
+    name = "arch",
+    features = [
+        image.pacman_install(["base"]),
+    ],
+)

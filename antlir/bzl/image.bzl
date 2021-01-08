@@ -12,6 +12,7 @@ load("//antlir/bzl/image_actions:install.bzl", "image_install", "image_install_b
 load("//antlir/bzl/image_actions:mount.bzl", "image_host_dir_mount", "image_host_file_mount", "image_layer_mount")
 load("//antlir/bzl/image_actions:remove.bzl", "image_remove")
 load("//antlir/bzl/image_actions:rpms.bzl", "image_rpms_install", "image_rpms_remove_if_exists")
+load("//antlir/bzl/image_actions:pacman.bzl", "image_pacman_install", "image_pacman_remove_if_exists")
 load("//antlir/bzl/image_actions:symlink.bzl", "image_symlink_dir", "image_symlink_file")
 load("//antlir/bzl/image_actions:tarball.bzl", "image_tarball")
 load(":image_cpp_unittest.bzl", "image_cpp_unittest")
@@ -37,6 +38,8 @@ image = struct(
     remove = image_remove,
     rpms_install = image_rpms_install,
     rpms_remove_if_exists = image_rpms_remove_if_exists,
+    pacman_install = image_pacman_install,
+    pacman_remove_if_exists = image_pacman_remove_if_exists,
     symlink_dir = image_symlink_dir,
     symlink_file = image_symlink_file,
     host_dir_mount = image_host_dir_mount,

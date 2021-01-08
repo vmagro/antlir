@@ -65,8 +65,8 @@ assert len(PACMAN_COMMAND_ORDER) == len(PacmanCommand)
 
 # The actual resolution is more complicated, see `_action_to_command()`
 ACTION_TO_DEFAULT_CMD = {
-    PacmanAction.install: PacmanAction.install_name,
-    PacmanAction.remove_if_exists: PacmanAction.remove_name_if_exists,
+    PacmanAction.install: PacmanCommand.install_name,
+    PacmanAction.remove_if_exists: PacmanCommand.remove_name_if_exists,
 }
 
 
@@ -107,6 +107,28 @@ def _action_to_command(
     return None, None  # pragma: no cover
 
 
+def _convert_actions_to_commands(
+    subvol: Subvol,
+    action_to_names_or_pkgs: Mapping[PacmanAction, Union[str, _LocalPackage]],
+) -> Mapping[PacmanCommand, Union[str, _LocalPackage]]:
+    """
+    Go through the list of RPMs to install and change the action to
+    downgrade if it is a local RPM with a lower version than what is
+    installed.
+
+    Also use `local_install` and `local_remove` for _LocalRpm.
+
+    See the docs in `YumDnfCommand` for the rationale.
+    """
+    cmd_to_names_or_pkgs = {}
+    for action, names_or_pkgs in action_to_names_or_pkgs.items():
+        for nor in names_or_pkgs:
+            cmd, new_nor = _action_to_command(subvol, action, nor)
+            if cmd is None:  # pragma: no cover
+                raise AssertionError(f"Unsupported {action}, {nor}")
+            cmd_to_names_or_pkgs.setdefault(cmd, set()).add(new_nor)
+    return cmd_to_names_or_pkgs
+
 def _pkgs_and_bind_ros(
     names_or_pkgs: List[Union[str, _LocalPackage]]
 ) -> Tuple[List[str], List[str]]:
@@ -133,7 +155,6 @@ class PacmanActionItem(ImageItem):
     action: PacmanAction
     name: Optional[str] = None
     source: Optional[str] = None
-    version_set: Optional[Path] = None
 
     @classmethod
     def customize_fields(cls, kwargs):
@@ -160,43 +181,32 @@ class PacmanActionItem(ImageItem):
         # This Mapping[PacmanAction, Union[str, _LocalPackage]] powers builder() below.
         action_to_names_or_pkgs = _get_action_to_names_or_pkgs(items)
 
-        # Future: when we add per-layer version set overrides, they will
-        # need apply on top of the repo-wide version set we are using.
-        version_sets = set()
-        for item in items:
-            if item.version_set is None:
-                continue
-            version_sets.add(item.version_set)
-
         def builder(subvol: Subvol) -> None:
-            with _prepare_versionlock(
-                version_sets, layer_opts.version_set_override
-            ) as versionlock_path:
-                # Convert porcelain PacmanAction to plumbing PacmanCommands.  This
-                # is done in the builder because we need access to the subvol.
-                #
-                # Sort by command for determinism and clearer behaivor.
-                for cmd, nors in sorted(
-                    _convert_actions_to_commands(
-                        subvol, action_to_names_or_pkgs
-                    ).items(),
-                    key=lambda cn: PACMAN_COMMAND_ORDER[cn[0]],
-                ):
-                    pkgs, bind_ros = _pkgs_and_bind_ros(nors)
-                    _pacman_using_build_appliance(
-                        build_appliance=build_appliance,
-                        bind_ros=bind_ros,
-                        install_root=subvol.path(),
-                        protected_paths=protected_path_set(subvol),
-                        pacman_args=[
-                            cmd.value,
-                            "--noconfirm",
-                            # Sort ensures determinism even if `yum` or
-                            # `dnf` is order-dependent
-                            *sorted(pkgs),
-                        ],
-                        layer_opts=layer_opts,
-                    )
+            # Convert porcelain PacmanAction to plumbing PacmanCommands.  This
+            # is done in the builder because we need access to the subvol.
+            #
+            # Sort by command for determinism and clearer behaivor.
+            for cmd, nors in sorted(
+                _convert_actions_to_commands(
+                    subvol, action_to_names_or_pkgs
+                ).items(),
+                key=lambda cn: PACMAN_COMMAND_ORDER[cn[0]],
+            ):
+                pkgs, bind_ros = _pkgs_and_bind_ros(nors)
+                _pacman_using_build_appliance(
+                    build_appliance=build_appliance,
+                    bind_ros=bind_ros,
+                    install_root=subvol.path(),
+                    protected_paths=protected_path_set(subvol),
+                    pacman_args=[
+                        cmd.value,
+                        "--noconfirm",
+                        # Sort ensures determinism even if `yum` or
+                        # `dnf` is order-dependent
+                        *sorted(pkgs),
+                    ],
+                    layer_opts=layer_opts,
+                )
 
         return builder
 

@@ -20,6 +20,7 @@ from antlir.compiler.items.make_subvol import (
 from antlir.compiler.items.mount import MountItem
 from antlir.compiler.items.remove_path import RemovePathItem
 from antlir.compiler.items.rpm_action import RpmActionItem
+from antlir.compiler.items.pacman_action import PacmanActionItem
 from antlir.compiler.items.symlink import SymlinkToDirItem, SymlinkToFileItem
 from antlir.compiler.items.tarball import TarballItem
 from antlir.find_built_subvol import find_built_subvol
@@ -121,6 +122,7 @@ def gen_items_for_features(
         "mounts": lambda **kwargs: MountItem(**kwargs, layer_opts=layer_opts),
         "parent_layer": ParentLayerItem,
         "rpms": image_sourcify(RpmActionItem),
+        "pacman_packages": image_sourcify(PacmanActionItem),
         "remove_paths": RemovePathItem,
         "symlinks_to_dirs": SymlinkToDirItem,
         "symlinks_to_files": SymlinkToFileItem,

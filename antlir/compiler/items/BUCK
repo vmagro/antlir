@@ -124,6 +124,16 @@ python_unittest(
     ],
 )
 
+python_library(
+    name = "pacman_action",
+    srcs = ["pacman_action.py"],
+    deps = [
+        ":common",
+        "//antlir/nspawn_in_subvol:nspawn",
+        "//antlir/rpm:find_snapshot",
+    ],
+)
+
 shape.loader(
     name = "foreign_layer_t",
     shape = foreign_layer_t,
@@ -330,6 +340,7 @@ python_library(
         ":items",
         ":phases_provide",
         ":rpm_action",
+        ":pacman_action",
     ],
 )
 
