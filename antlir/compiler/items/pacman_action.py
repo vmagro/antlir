@@ -241,11 +241,15 @@ def _pacman_using_build_appliance(
             "sh",
             "-uec",
             f"""
-            mkdir -p {work_dir}/var/lib/pacman &&
-            pacman --config={(snapshot_dir / "pacman.conf").shell_quote()} -Syy && \
+            mkdir -p {work_dir}/var/lib/pacman && \
+            rm -f /etc/resolv.conf && \
+            echo 'nameserver 1.1.1.1' > /etc/resolv.conf && \
+            pacman --config={(snapshot_dir / "pacman.conf").shell_quote()} -Sy && \
+            yes | pacman-key --init && \
             pacman \
             --config={(snapshot_dir / "pacman.conf").shell_quote()} \
-            --root={work_dir} {
+            --refresh \
+            --sysroot={work_dir} {
                 ' '.join(shlex.quote(arg) for arg in pacman_args)
             }
             """,
