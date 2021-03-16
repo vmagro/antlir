@@ -13,11 +13,10 @@ precise_srcs = true
 # registering them in the Cargo metadata, or have more than the single file
 # it allows. Just look in the top-level dir for now.
 license_patterns = [
-  "LICENSE*", "COPYING*", "UNLICENSE*",
+  "LICENSE*",
+  "COPYING*",
+  "UNLICENSE*",
 ]
-
-# This only works inside FB, but that's fine
-buildifier_path = "../../tools/third-party/buildifier/run_buildifier.py"
 
 # If a fixups.toml file is needed (eg, the package has a build.rs), then generate a template
 # fixups.toml to be edited.
@@ -39,8 +38,7 @@ extra_top_levels = true
 # Exclude files listed in the .gitignore in this directory
 gitignore_checksum_exclude = [".gitignore"]
 # Additional globs to ignore (prefer .gitignore for consistentcy with source control)
-checksum_exclude = [
-]
+checksum_exclude = []
 
 # Configuration for rustsec auditing
 [audit]
@@ -70,12 +68,12 @@ never_autofix = [
 
 # x86_64-unknown-linux-gnu
 [platform.linux-x86_64]
-x86_64-unknown-linux-gnu = [] # true for a boolean test
+feature = [] # in case anyone is doing `cfg(feature = "foo")`, which never works
+target_arch = ["x86_64"]
+target_env = ["gnu"]
 target_family = ["unix"]
 target_os = ["linux"]
-target_env = ["gnu"]
-target_arch = ["x86_64"]
-feature = [] # in case anyone is doing `cfg(feature = "foo")`, which never works
+x86_64-unknown-linux-gnu = [] # true for a boolean test
 
 [cargo]
 # Directories for vendored directories always have version numbers (by default they
@@ -93,12 +91,12 @@ file_name = "BUCK"
 # such as per-platform settings. The intent is that you provide a set of macro definitions
 # which resolve them to appropriate underlying rules suitable for your environment.
 # (This may also work for Buck-like build systems such as Bazel.)
-rust_library = "third_party_rust_library"       # A plain Rust library
-rust_binary = "third_party_rust_binary"         # A Rust executable
-cxx_library = "third_party_rust_cxx_library"    # A C++ library (mostly for Rust -> C dependencies)
-prebuilt_cxx_library = "third_party_rust_prebuilt_cxx_library"    # A prebuilt library (mostly for Rust -> C dependencies)
-buildscript_genrule_args = "rust_buildscript_genrule_filter"    # A genrule for rustc args from a build script
-buildscript_genrule_srcs = "rust_buildscript_genrule_srcs"      # A genrule for generated sources from a build script
+rust_binary = "third_party_rust_binary" # A Rust executable
+rust_library = "third_party_rust_library" # A plain Rust library
+# cxx_library = "third_party_rust_cxx_library"    # A C++ library (mostly for Rust -> C dependencies)
+# prebuilt_cxx_library = "third_party_rust_prebuilt_cxx_library"    # A prebuilt library (mostly for Rust -> C dependencies)
+# buildscript_genrule_args = "rust_buildscript_genrule_filter"    # A genrule for rustc args from a build script
+# buildscript_genrule_srcs = "rust_buildscript_genrule_srcs"      # A genrule for generated sources from a build script
 
 # Banner comment for the generated BUCK File.
 generated_file_header = """
@@ -113,12 +111,8 @@ generated_file_header = """
 # Load the macros to which the rules above will resolve.
 buckfile_imports = """
 load(
-    "//third-party/macros:rust_third_party.bzl",
-    "rust_buildscript_genrule_filter", # names match above
-    "rust_buildscript_genrule_srcs",
+    ":defs.bzl",
     "third_party_rust_library",
     "third_party_rust_binary",
-    "third_party_rust_cxx_library",
-    "third_party_rust_prebuilt_cxx_library",
 )
 """
