@@ -91,12 +91,12 @@ file_name = "BUCK"
 # such as per-platform settings. The intent is that you provide a set of macro definitions
 # which resolve them to appropriate underlying rules suitable for your environment.
 # (This may also work for Buck-like build systems such as Bazel.)
+buildscript_genrule_args = "rust_buildscript_genrule_filter" # A genrule for rustc args from a build script
+buildscript_genrule_srcs = "rust_buildscript_genrule_srcs" # A genrule for generated sources from a build script
+cxx_library = "third_party_rust_cxx_library" # A C++ library (mostly for Rust -> C dependencies)
+prebuilt_cxx_library = "third_party_rust_prebuilt_cxx_library" # A prebuilt library (mostly for Rust -> C dependencies)
 rust_binary = "third_party_rust_binary" # A Rust executable
 rust_library = "third_party_rust_library" # A plain Rust library
-# cxx_library = "third_party_rust_cxx_library"    # A C++ library (mostly for Rust -> C dependencies)
-# prebuilt_cxx_library = "third_party_rust_prebuilt_cxx_library"    # A prebuilt library (mostly for Rust -> C dependencies)
-# buildscript_genrule_args = "rust_buildscript_genrule_filter"    # A genrule for rustc args from a build script
-# buildscript_genrule_srcs = "rust_buildscript_genrule_srcs"      # A genrule for generated sources from a build script
 
 # Banner comment for the generated BUCK File.
 generated_file_header = """
@@ -114,5 +114,13 @@ load(
     ":defs.bzl",
     "third_party_rust_library",
     "third_party_rust_binary",
+    "third_party_rust_cxx_library",
+    "third_party_rust_prebuilt_cxx_library",
+    "rust_buildscript_genrule_filter",
+    "rust_buildscript_genrule_srcs",
 )
+
+load("//antlir/bzl:oss_shim.bzl", "export_file")
+
+export_file(name = "cargo_cfgs.awk")
 """

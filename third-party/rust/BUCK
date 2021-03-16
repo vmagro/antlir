@@ -9,7 +9,15 @@ load(
     ":defs.bzl",
     "third_party_rust_library",
     "third_party_rust_binary",
+    "third_party_rust_cxx_library",
+    "third_party_rust_prebuilt_cxx_library",
+    "rust_buildscript_genrule_filter",
+    "rust_buildscript_genrule_srcs",
 )
+
+load("//antlir/bzl:oss_shim.bzl", "export_file")
+
+export_file(name = "cargo_cfgs.awk")
 
 third_party_rust_library(
     name = "ansi_term-0.11.0",
@@ -1035,7 +1043,9 @@ third_party_rust_library(
     "vendor/syn-1.0.64/src/verbatim.rs",
     "vendor/syn-1.0.64/src/whitespace.rs",
     ],
-    rustc_flags = ["--cap-lints=allow",],
+    rustc_flags = ["--cap-lints=allow",
+    "@$(location :syn-1.0.64-build-script-build-args)",
+    ],
     features = ["clone-impls",
     "default",
     "derive",
@@ -1068,6 +1078,24 @@ third_party_rust_binary(
     "proc-macro",
     "quote",
     ],
+)
+
+rust_buildscript_genrule_filter(
+    name = "syn-1.0.64-build-script-build-args",
+    buildscript_rule = ":syn-1.0.64-build-script-build",
+    package_name = "syn",
+    version = "1.0.64",
+    features = ["clone-impls",
+    "default",
+    "derive",
+    "full",
+    "parsing",
+    "printing",
+    "proc-macro",
+    "quote",
+    ],
+    cfgs = [],
+    outfile = "args.txt",
 )
 
 third_party_rust_library(
