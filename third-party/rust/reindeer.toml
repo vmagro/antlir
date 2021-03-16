@@ -123,4 +123,5 @@ load(
 load("//antlir/bzl:oss_shim.bzl", "export_file")
 
 export_file(name = "cargo_cfgs.awk")
+export_file(name = "buildrs_filter.py")
 """

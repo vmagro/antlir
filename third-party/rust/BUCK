@@ -18,6 +18,7 @@ load(
 load("//antlir/bzl:oss_shim.bzl", "export_file")
 
 export_file(name = "cargo_cfgs.awk")
+export_file(name = "buildrs_filter.py")
 
 third_party_rust_library(
     name = "ansi_term-0.11.0",
@@ -842,7 +843,9 @@ third_party_rust_library(
     "vendor/proc-macro2-1.0.24/src/parse.rs",
     "vendor/proc-macro2-1.0.24/src/wrapper.rs",
     ],
-    rustc_flags = ["--cap-lints=allow",],
+    rustc_flags = ["--cap-lints=allow",
+    "@$(location :proc-macro2-1.0.24-build-script-build-args)",
+    ],
     features = ["default",
     "proc-macro",
     ],
@@ -860,6 +863,18 @@ third_party_rust_binary(
     features = ["default",
     "proc-macro",
     ],
+)
+
+rust_buildscript_genrule_filter(
+    name = "proc-macro2-1.0.24-build-script-build-args",
+    buildscript_rule = ":proc-macro2-1.0.24-build-script-build",
+    package_name = "proc-macro2",
+    version = "1.0.24",
+    features = ["default",
+    "proc-macro",
+    ],
+    cfgs = [],
+    outfile = "args.txt",
 )
 
 third_party_rust_library(
