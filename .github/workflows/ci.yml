@@ -8,7 +8,13 @@ defaults:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container: fedora:40
     steps:
+      - name: Install deps
+        run: |
+          sudo dnf install -y \
+            btrfs-progs cpio git jq libcap-devel systemd-container
+
       - uses: actions/checkout@v4
         with:
           submodules: true
@@ -23,10 +29,6 @@ jobs:
           mkfs.btrfs ${{ runner.temp }}/image.btrfs
           sudo mount ${{ runner.temp }}/image.btrfs antlir2-out
           sudo chown -R $(id -u):$(id -g) antlir2-out
-      - name: Install deps
-        run: |
-          sudo apt install \
-            cpio jq libcap-dev systemd-container
 
       - name: Disable watchman
         run: |
