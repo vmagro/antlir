@@ -65,8 +65,8 @@ jobs:
 
       - name: Build tests
         run: |
-          ./buck2 build @${{ runner.temp }}/tests.txt
+          sudo ./buck2 build @${{ runner.temp }}/tests.txt
 
       - name: Run tests
         run: |
-          ./buck2 test @${{ runner.temp }}/tests.txt
+          sudo ./buck2 test @${{ runner.temp }}/tests.txt
