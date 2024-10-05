@@ -23,5 +23,18 @@
 
 [buck2]
     file_watcher = watchman
+    materializations = deferred
+    sqlite_materializer_state = true
+    defer_write_actions = true
+    hash_all_commands = true
+
+[buck2_re_client]
+    action_cache_address = grpc://cas-vmagro.build-faster.nativelink.net
+    engine_address = grpc://cas-vmagro.build-faster.nativelink.net
+    cas_address = grpc://cas-vmagro.build-faster.nativelink.net
+    http_headers = x-nativelink-api-key: $NATIVELINK_CLOUD_API_KEY
+
+[build]
+  execution_platforms = antlir//platforms:exec-platforms
 
 <file:.buckconfig.generated>
