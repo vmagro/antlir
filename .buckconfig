@@ -23,3 +23,16 @@
 
 [buck2]
     file_watcher = watchman
+    materializations = deferred
+    sqlite_materializer_state = true
+    defer_write_actions = true
+    hash_all_commands = true
+
+[buck2_re_client]
+    action_cache_address = grpc://remote.buildbuddy.io
+    engine_address = grpc://remote.buildbuddy.io
+    cas_address = grpc://remote.buildbuddy.io
+    http_headers = x-buildbuddy-api-key:$BUILDBUDDY_API_KEY
+
+[build]
+  execution_platforms = antlir//platforms:exec-platforms

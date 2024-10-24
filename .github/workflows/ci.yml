@@ -7,13 +7,12 @@ defaults:
 
 jobs:
   test:
-    runs-on:
-      # this runner comes with 150GB of disk space
-      labels: 4-core-ubuntu
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+
       - uses: facebook/install-dotslash@latest
       - uses: dtolnay/rust-toolchain@master
         with:
@@ -26,7 +25,7 @@ jobs:
           mkfs.btrfs ${{ runner.temp }}/image.btrfs
           sudo mount ${{ runner.temp }}/image.btrfs antlir2-out
           sudo chown -R $(id -u):$(id -g) antlir2-out
-      - name: Install deps
+      - name: Install system deps
         run: |
           sudo apt install \
             cpio jq libcap-dev systemd-container
@@ -39,6 +38,10 @@ jobs:
       - name: Test target graph
         run: |
           ./buck2 bxl //ci:test_target_graph.bxl:test_target_graph
+        # This secret must be attached to the first buck invocation
+        env:
+          BUILDBUDDY_API_KEY: ${{ secrets.BUILDBUDDY_CLOUD_API_KEY }}
+
 
       - name: Find tests
         run: |
