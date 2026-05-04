@@ -22,7 +22,7 @@
     ignore = antlir2-out, .git, .sl
 
 [buck2]
-    file_watcher = watchman
+    file_watcher = notify
 
 [build]
     execution_platforms = antlir//platforms:host

@@ -41,3 +41,9 @@ rollout = struct(
     check_base_path = ret_false,
     create_feature = ret_false,
 )
+
+tpx_labels = struct(
+    disabled = "disabled",
+    test_is_invisible_to_testpilot = "OSS_NO_OP",
+    enable_artifact_reporting = "OSS_NO_OP",
+)

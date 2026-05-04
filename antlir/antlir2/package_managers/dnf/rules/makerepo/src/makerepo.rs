@@ -297,20 +297,20 @@ fn main() -> Result<()> {
         .create_element("repomd")
         .with_attribute(("xmlns", "http://linux.duke.edu/metadata/repo"))
         .with_attribute(("xmlns:rpm", "http://linux.duke.edu/metadata/rpm"))
-        .write_inner_content(|w| {
+        .write_inner_content::<_, quick_xml::Error>(|w| {
             w.create_element("data")
                 .with_attribute(("type", "primary"))
-                .write_inner_content(|w| primary.write(w).map_err(std::io::Error::other))?;
+                .write_inner_content::<_, quick_xml::Error>(|w| primary.write(w))?;
             w.create_element("data")
                 .with_attribute(("type", "filelists"))
-                .write_inner_content(|w| filelists.write(w).map_err(std::io::Error::other))?;
+                .write_inner_content::<_, quick_xml::Error>(|w| filelists.write(w))?;
             w.create_element("data")
                 .with_attribute(("type", "other"))
-                .write_inner_content(|w| other.write(w).map_err(std::io::Error::other))?;
+                .write_inner_content::<_, quick_xml::Error>(|w| other.write(w))?;
             if let Some(modulemd) = &modulemd {
                 w.create_element("data")
                     .with_attribute(("type", "modules"))
-                    .write_inner_content(|w| modulemd.write(w).map_err(std::io::Error::other))?;
+                    .write_inner_content::<_, quick_xml::Error>(|w| modulemd.write(w))?;
             }
             Ok(())
         })?;

@@ -106,7 +106,7 @@ impl GenerateInRelease {
         let mut output = Vec::new();
         {
             let message = Message::new(&mut output);
-            let mut signer = Signer::new(message, signing_key)?.cleartext().build()?;
+            let mut signer = Signer::new(message, signing_key).cleartext().build()?;
             signer.write_all(release_content.as_bytes())?;
             signer.finalize()?;
         }

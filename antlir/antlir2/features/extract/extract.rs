@@ -168,8 +168,9 @@ pub fn so_dependencies<S: AsRef<OsStr> + std::fmt::Debug>(
 
     let buf = std::fs::read(&binary_as_seen_from_here)
         .with_context(|| format!("while reading {}", binary_as_seen_from_here.display()))?;
-    let elf =
-        Elf::parse(&buf).with_context(|| format!("while parsing ELF {}", binary.display()))?;
+    let elf = Elf::parse(&buf)
+        .map_err(|e| anyhow::anyhow!("{e}"))
+        .with_context(|| format!("while parsing ELF {}", binary.display()))?;
     let interpreter = elf.interpreter.map_or(default_interpreter, Path::new);
 
     trace!(
