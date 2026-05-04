@@ -18,6 +18,11 @@ Most real projects should copy/paste the implementation to configure them.
 """
 system_cxx_toolchain(
     name = "cxx",
+    archiver = "/usr/bin/ar",
+    compiler = "/home/vmagro/.local/bin/gcc-wrapper",
+    compiler_type = "gcc",
+    cxx_compiler = "/home/vmagro/.local/bin/g++-wrapper",
+    linker = "/home/vmagro/.local/bin/g++-wrapper",
     cxx_flags = [
         "--std=c++17",
     ],
@@ -42,6 +47,9 @@ system_python_bootstrap_toolchain(
 system_rust_toolchain(
     name = "rust",
     default_edition = "2021",
+    rustc_flags = [
+        "-Copt-level=0",
+    ],
     visibility = ["PUBLIC"],
 )
 
