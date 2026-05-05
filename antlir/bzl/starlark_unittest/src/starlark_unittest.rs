@@ -187,16 +187,14 @@ impl TestModule {
                     end_col: 0,
                 },
                 testfn: TestFn::DynTestFn(Box::new(move || {
-                    Module::with_temp_heap(|module| {
-                        let heap = module.heap();
-                        let fail_store = FailStore(RefCell::new(None));
-                        let mut evaluator = Evaluator::new(&module);
-                        evaluator.extra = Some(&fail_store);
-                        evaluator
-                            .eval_function(heap.access_owned_frozen_value(&starlark_func), &[], &[])
-                            .expect("test function failed");
-                        Ok(())
-                    })
+                    let module = Module::new();
+                    let fail_store = FailStore(RefCell::new(None));
+                    let mut evaluator = Evaluator::new(&module);
+                    evaluator.extra = Some(&fail_store);
+                    evaluator
+                        .eval_function(starlark_func.value(), &[], &[])
+                        .expect("test function failed");
+                    Ok(())
                 })),
             })
             .collect()
@@ -262,7 +260,8 @@ impl FileLoader for Loader {
         let ast = AstModule::parse(&path, src, &Dialect::Extended)
             .map_err(starlark::Error::into_anyhow)?;
 
-        Module::with_temp_heap(|module| {
+        {
+            let module = Module::new();
             {
                 let mut eval = Evaluator::new(&module);
                 eval.set_loader(self);
@@ -270,7 +269,7 @@ impl FileLoader for Loader {
                     .map_err(starlark::Error::into_anyhow)?;
             }
             Ok(module.freeze()?)
-        })
+        }
     }
 }
 

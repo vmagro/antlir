@@ -31,7 +31,7 @@ async-trait = { version = "=0.1.88", default-features = false }
 atomic = { version = "=0.5.3", features = ["fallback"] }
 backtrace = { version = "=0.3.75", features = ["std"] }
 base64 = { version = "=0.22.1", features = ["alloc", "std"] }
-bindgen = { version = "=0.71.1", default-features = false, features = ["logging", "prettyplease", "static"] }
+bindgen = { version = "=0.71.1", default-features = false, features = ["logging", "prettyplease", "runtime"] }
 bit-set = { version = "=0.5.3", features = ["std"] }
 bit-vec = { version = "=0.6.3", features = ["std"] }
 bitflags = { version = "=2.9.1", default-features = false, features = ["std"] }
@@ -50,7 +50,7 @@ cap-std = { version = "=3.4.4" }
 cfg-if = { version = "=0.1.10", default-features = false }
 chrono = { version = "=0.4.41", features = ["alloc", "android-tzdata", "clock", "iana-time-zone", "js-sys", "now", "oldtime", "serde", "std", "wasm-bindgen", "wasmbind", "winapi", "windows-link"] }
 chrono-tz = { version = "=0.8.6", features = ["std"] }
-clang-sys = { version = "=1.8.1", default-features = false, features = ["clang_10_0", "clang_11_0", "clang_12_0", "clang_3_5", "clang_3_6", "clang_3_7", "clang_3_8", "clang_3_9", "clang_4_0", "clang_5_0", "clang_6_0", "clang_7_0", "clang_8_0", "clang_9_0", "static"] }
+clang-sys = { version = "=1.8.1", default-features = false, features = ["clang_10_0", "clang_11_0", "clang_12_0", "clang_3_5", "clang_3_6", "clang_3_7", "clang_3_8", "clang_3_9", "clang_4_0", "clang_5_0", "clang_6_0", "clang_7_0", "clang_8_0", "clang_9_0", "runtime"] }
 clap = { version = "=4.5.40", features = ["color", "derive", "env", "error-context", "help", "std", "string", "suggestions", "unicode", "usage", "wrap_help"] }
 clap_complete = { version = "=4.5.54" }
 clap_mangen = { version = "=0.2.27" }
@@ -134,7 +134,7 @@ indenter = { version = "=0.3.3" }
 indexmap = { version = "=2.9.0", features = ["arbitrary", "rayon", "serde", "std"] }
 indoc = { version = "=2.0.6", default-features = false }
 inventory = { version = "=0.3.20", default-features = false }
-itertools = { version = "=0.14.0", default-features = false }
+itertools = { version = "=0.14.0" }
 jwalk = { version = "=0.6.2", default-features = false }
 lalrpop = { version = "=0.19.12", features = ["lexer", "pico-args"] }
 lalrpop-util = { version = "=0.19.12", features = ["lexer", "regex", "std"] }
@@ -142,6 +142,7 @@ lazy_static = { version = "=1.5.0", default-features = false, features = ["spin"
 libc = { version = "=0.2.174", features = ["extra_traits", "std"] }
 libloading = { version = "=0.6.7", default-features = false }
 libm = { version = "=0.2.15", features = ["arch"] }
+liblzma = { version = "=0.3.6" }
 libz-sys = { version = "=1.1.22", features = ["libc", "stock-zlib"] }
 linux-raw-sys = { version = "=0.6.5", features = ["errno", "general", "std"] }
 lock_api = { version = "=0.4.13", features = ["atomic_usize"] }
@@ -205,7 +206,7 @@ prost = { version = "=0.12.6", default-features = false, features = ["derive", "
 prost-derive = { version = "=0.12.6", default-features = false }
 prost-types = { version = "=0.12.6", features = ["std"] }
 pyo3 = { version = "=0.24.2", features = ["anyhow", "indoc", "macros", "pyo3-macros", "unindent"] }
-quick-xml = { version = "=0.23.1", features = ["serde", "serialize"] }
+quick-xml = { version = "=0.36.2", features = ["serde", "serialize"] }
 quickcheck = { version = "=1.0.3", features = ["env_logger", "log", "regex", "use_logging"] }
 quote = { version = "=1.0.40", features = ["proc-macro"] }
 radix_trie = { version = "=0.2.1", default-features = false, features = ["serde"] }
@@ -243,6 +244,7 @@ serde = { version = "=1.0.219", features = ["alloc", "derive", "rc", "serde_deri
 serde_derive = { version = "=1.0.219" }
 serde_json = { version = "=1.0.140", features = ["float_roundtrip", "raw_value", "std", "unbounded_depth"] }
 serde_repr = { version = "=0.1.20", default-features = false }
+sequoia-openpgp = { version = "1", default-features = false, features = ["crypto-openssl"] }
 serde_starlark = { version = "=0.1.17", default-features = false }
 serde_urlencoded = { version = "=0.7.1", default-features = false }
 serde_with = { version = "=1.14.0", features = ["hex", "json", "macros", "serde_json", "serde_with_macros"] }
